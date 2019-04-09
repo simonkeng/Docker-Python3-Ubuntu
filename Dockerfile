@@ -1,7 +1,5 @@
 FROM ubuntu:bionic
 
-MAINTAINER Matthew Feickert <matthewfeickert@users.noreply.github.com>
-
 USER root
 WORKDIR /root
 
@@ -10,9 +8,6 @@ SHELL [ "/bin/bash", "-c" ]
 ARG PYTHON_VERSION_TAG=3.7.3
 ARG LINK_PYTHON_TO_PYTHON3=1
 
-# Existing lsb_release causes issues with modern installations of Python3
-# https://github.com/pypa/pip/issues/4924#issuecomment-435825490
-# Set (temporarily) DEBIAN_FRONTEND to avoid interacting with tzdata
 RUN apt-get -qq -y update && \
     apt-get -qq -y upgrade && \
     DEBIAN_FRONTEND=noninteractive apt-get -qq -y install \
@@ -36,9 +31,7 @@ RUN apt-get -qq -y update && \
         git \
         make \
         sudo \
-        bash-completion \
-        tree \
-        vim \
+        tesseract-ocr
         software-properties-common && \
     mv /usr/bin/lsb_release /usr/bin/lsb_release.bak && \
     apt-get -y autoclean && \
@@ -48,12 +41,6 @@ RUN apt-get -qq -y update && \
 ADD install_python.sh install_python.sh
 RUN bash install_python.sh ${PYTHON_VERSION_TAG} ${LINK_PYTHON_TO_PYTHON3} && \
     rm -r install_python.sh Python-${PYTHON_VERSION_TAG}
-
-# Enable tab completion by uncommenting it from /etc/bash.bashrc
-# The relevant lines are those below the phrase "enable bash completion in interactive shells"
-RUN export SED_RANGE="$(($(sed -n '\|enable bash completion in interactive shells|=' /etc/bash.bashrc)+1)),$(($(sed -n '\|enable bash completion in interactive shells|=' /etc/bash.bashrc)+7))" && \
-    sed -i -e "${SED_RANGE}"' s/^#//' /etc/bash.bashrc && \
-    unset SED_RANGE
 
 # Create user "docker" with sudo powers
 RUN useradd -m docker && \
