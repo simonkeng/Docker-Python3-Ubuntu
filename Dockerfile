@@ -1,6 +1,9 @@
 FROM ubuntu:bionic
 
-# SHELL [ "/bin/bash", "-c" ]
+USER root
+WORKDIR /root
+
+SHELL [ "/bin/bash", "-c" ]
 
 ARG PYTHON_VERSION_TAG=3.7.3
 ARG LINK_PYTHON_TO_PYTHON3=1
@@ -28,40 +31,35 @@ RUN apt-get -qq -y update && \
         git \
         make \
         sudo \
-        tesseract-ocr \
-        ghostscript \
+        tesseract-ocr
         software-properties-common && \
     mv /usr/bin/lsb_release /usr/bin/lsb_release.bak && \
     apt-get -y autoclean && \
     apt-get -y autoremove && \
     rm -rf /var/lib/apt-get/lists/*
 
-RUN dpkg --configure -a
-
-# Needed for Java
-RUN mkdir -p /usr/share/man/man1
-
-# Java install
-RUN apt-get install -f && \
-    apt-get -y install default-jre && \
-    apt-get clean
-
 ADD install_python.sh install_python.sh
 RUN bash install_python.sh ${PYTHON_VERSION_TAG} ${LINK_PYTHON_TO_PYTHON3} && \
     rm -r install_python.sh Python-${PYTHON_VERSION_TAG}
 
+# Create user "docker" with sudo powers
+RUN useradd -m docker && \
+    usermod -aG sudo docker && \
+    echo '%sudo ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers && \
+    cp /root/.bashrc /home/docker/ && \
+    mkdir /home/docker/data && \
+    chown -R --from=root docker /home/docker
+
+# Use C.UTF-8 locale to avoid issues with ASCII encoding
 ENV LC_ALL=C.UTF-8
 ENV LANG=C.UTF-8
 
-WORKDIR /tmp
+WORKDIR /home/docker/data
+ENV HOME /home/docker
+ENV USER docker
+USER docker
+ENV PATH /home/docker/.local/bin:$PATH
+# Avoid first use of sudo warning. c.f. https://askubuntu.com/a/22614/781671
+RUN touch $HOME/.sudo_as_admin_successful
 
-RUN mkdir /tmp/working
-
-COPY requirements.txt /tmp/requirements.txt
-RUN pip install -r /tmp/requirements.txt
-
-COPY pdf_table_to_dataframe.py /tmp/pdf_table_to_dataframe.py
-COPY pdf_to_tiff.sh /tmp/pdf_to_tiff.sh
-COPY pdf_tables.sh /tmp/pdf_tables.sh
-
-ENTRYPOINT ["./pdf_tables.sh"]
+CMD [ "/bin/bash" ]
