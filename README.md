@@ -38,3 +38,11 @@ Dockerfile for image built off [Ubuntu 18.04](https://wiki.ubuntu.com/BionicBeav
 ### From source
 
 - Python 3.7 (3.6)
+
+-----
+
+# Instructions
+
+```bash
+docker build -t ub18py37 .
+```
