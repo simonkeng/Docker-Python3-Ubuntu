@@ -48,5 +48,7 @@ Dockerfile for image built off [Ubuntu 18.04](https://wiki.ubuntu.com/BionicBeav
 2. Run the `Makefile` to automate the docker build commands. The image will be built as `ubuntu18python37`. 
 
 ```bash
-make
+$ ls
+Dockerfile        LICENSE           Makefile          README.md         install_python.sh
+$ make
 ```
