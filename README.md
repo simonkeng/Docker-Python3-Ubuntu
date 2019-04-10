@@ -43,6 +43,10 @@ Dockerfile for image built off [Ubuntu 18.04](https://wiki.ubuntu.com/BionicBeav
 
 # Instructions
 
+1. Clone this repo: `git clone https://github.com/simonkeng/ubuntu18python37.git`
+
+2. Run the `Makefile` to automate the docker build commands. The image will be built as `ubuntu18python37`. 
+
 ```bash
-docker build -t ub18py37 .
+make
 ```
