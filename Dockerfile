@@ -25,8 +25,6 @@ RUN apt-get -qq -y update && \
         curl \
         git \
         make \
-        sudo \
-        tesseract-ocr
         software-properties-common && \
     mv /usr/bin/lsb_release /usr/bin/lsb_release.bak && \
     apt-get -y autoclean && \
