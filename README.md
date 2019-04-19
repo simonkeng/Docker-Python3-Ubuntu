@@ -6,7 +6,7 @@ Massive credit & thanks to [@matthewfeickert](https://github.com/matthewfeickert
 
 1. Clone this repo: `git clone https://github.com/simonkeng/ubuntu18python37.git`
 
-2. Run the `Makefile` to automate the docker build commands. The image will be built as `ubuntu18python37`. 
+2. Run the `Makefile` to automate the `docker build` instructions. The image will be built as `ubuntu18python37`. 
 
 ```bash
 $ ls
